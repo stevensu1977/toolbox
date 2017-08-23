@@ -10,6 +10,7 @@ const (
 	Mix = iota
 	Number
 	NumberNoZero
+	Hex
 	Upper
 	Lower
 	MixAll
@@ -28,6 +29,8 @@ func rand_seek(rand_type int) string {
 		return "0123456789"
 	case NumberNoZero:
 		return "123456789"
+	case Hex:
+		return "0123456789ABCDEF"
 	case Upper:
 		return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	case Lower:
