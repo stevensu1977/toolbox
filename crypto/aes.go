@@ -20,11 +20,11 @@ type AESCoder struct {
 }
 
 func (aesCoder *AESCoder) Encrypt(plain string) (string, error) {
-	return encrypt(plain, aesCoder.Key, aesCoder.Hex)
+	return aesEncrypt(plain, aesCoder.Key, aesCoder.Hex)
 }
 
 func (aesCoder *AESCoder) Decrypt(plain string) (string, error) {
-	return decrypt(plain, aesCoder.Key, aesCoder.Hex)
+	return aesDecrypt(plain, aesCoder.Key, aesCoder.Hex)
 }
 
 func NewAesCoder() *AESCoder {
@@ -35,12 +35,12 @@ func NewAesCoder() *AESCoder {
 	}
 }
 
-func Encrypt(plain string) (string, error) {
+func AESEncrypt(plain string) (string, error) {
 
-	return encrypt(plain, KEY, HEX_STR)
+	return aesEncrypt(plain, KEY, HEX_STR)
 }
 
-func encrypt(plain string, key []byte, hex_str string) (string, error) {
+func aesEncrypt(plain string, key []byte, hex_str string) (string, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
@@ -62,12 +62,12 @@ func encrypt(plain string, key []byte, hex_str string) (string, error) {
 	return hex.EncodeToString(ciphertext[:]), nil
 }
 
-func Decrypt(plain string) (string, error) {
+func AESDecrypt(plain string) (string, error) {
 
-	return decrypt(plain, KEY, HEX_STR)
+	return aesDecrypt(plain, KEY, HEX_STR)
 }
 
-func decrypt(plain string, key []byte, hex_str string) (string, error) {
+func aesDecrypt(plain string, key []byte, hex_str string) (string, error) {
 
 	nonce, _ := hex.DecodeString(hex_str)
 

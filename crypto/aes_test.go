@@ -7,9 +7,9 @@ import (
 func TestAes(t *testing.T) {
 	var source = "AA398!cs#"
 
-	e, _ := Encrypt(source)
+	e, _ := AESEncrypt(source)
 	t.Log(e)
-	r, _ := Decrypt(e)
+	r, _ := AESDecrypt(e)
 	t.Log(r)
 
 	if r != source {
@@ -40,7 +40,7 @@ func TestAesCoder(t *testing.T) {
 func BenchmarkRandInt(b *testing.B) {
 	var v = "LA791!cs#"
 	for n := 0; n < b.N; n++ {
-		Encrypt(v)
+		AESEncrypt(v)
 	}
 
 }
