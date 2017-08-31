@@ -22,8 +22,12 @@ type AESCoder struct {
 	Key []byte
 }
 
-func haveAesPrefix(payload string) bool {
+func HasAesPrefix(payload string) bool {
 	return strings.HasPrefix(payload, AES_Prefix)
+}
+
+func RemoveAesPrefix(payload string) string {
+	return strings.Replace(payload, AES_Prefix, "", -1)
 }
 
 //Encrypt provide AES encrypt , accept string

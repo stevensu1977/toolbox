@@ -16,7 +16,18 @@ func TestAes(t *testing.T) {
 	}
 
 }
+func TestAesPrefix(t *testing.T) {
+	d, _ := AESEncrypt("AA398!cs#")
 
+	var payload = "{AES}" + d
+	if ok := HasAesPrefix(payload); ok {
+		if e, err := AESDecrypt(RemoveAesPrefix(payload)); e != "AA398!cs#" || err != nil {
+			t.Fatal("decrypt error")
+		}
+		t.Log("OK")
+	}
+
+}
 func TestAesCoder(t *testing.T) {
 	var payload = "AA398!cs#"
 
