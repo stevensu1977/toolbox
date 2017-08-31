@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/hex"
+	"strings"
 
 	"github.com/stevensu1977/toolbox/rand"
 )
@@ -12,26 +13,42 @@ var (
 	KEY_HEADER = "AES256Key-"
 	KEY        = []byte("AES256Key-32Characters1234567890")
 	HEX_STR    = "37b8e8a308c354048d245f6d"
+	AES_Prefix = "{AES}"
 )
 
+// AESCoder is abstract struct ,provid all AES encrypt, decrypt func
 type AESCoder struct {
 	Hex string
 	Key []byte
 }
 
+func haveAesPrefix(payload string) bool {
+	return strings.HasPrefix(AES_Prefix)
+}
+
+//Encrypt provide AES encrypt , accept string
 func (aesCoder *AESCoder) Encrypt(plain string) (string, error) {
 	return aesEncrypt(plain, aesCoder.Key, aesCoder.Hex)
 }
 
+//Decrypt provide AES decrypt , accept string
 func (aesCoder *AESCoder) Decrypt(plain string) (string, error) {
 	return aesDecrypt(plain, aesCoder.Key, aesCoder.Hex)
 }
 
-func NewAesCoder() *AESCoder {
+//NewAesCoder get
+func NewAesCoder(key ...string) *AESCoder {
+	aesKey := []byte(KEY_HEADER + rand.RandString(22))
+	aesHex := rand.RandString(24, rand.Hex)
+
+	if len(key) == 2 && len(key[0]) == 32 && len(key[1]) == 24 {
+		aesKey = []byte(key[0])
+		aesHex = key[1]
+	}
 
 	return &AESCoder{
-		Key: []byte(KEY_HEADER + rand.RandString(22)),
-		Hex: rand.RandString(24, rand.Hex),
+		Key: []byte(aesKey),
+		Hex: aesHex,
 	}
 }
 

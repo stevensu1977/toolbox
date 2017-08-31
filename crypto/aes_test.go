@@ -19,28 +19,30 @@ func TestAes(t *testing.T) {
 }
 
 func TestAesCoder(t *testing.T) {
-	var v = "AA398!cs#"
+	var payload = "AA398!cs#"
 
 	aesCoder := NewAesCoder()
-	e, err := aesCoder.Encrypt(v)
+	eString, err := aesCoder.Encrypt(payload)
+	if err != nil {
+		panic(err)
+	}
+	dString, err := aesCoder.Decrypt(eString)
 	if err != nil {
 		panic(err)
 	}
 
-	d, err := aesCoder.Decrypt(e)
-	if err != nil {
-		panic(err)
+	if dString != payload {
+		t.Fatal("encrypt, decrypt error!")
 	}
 
-	t.Log(e)
-	t.Log(d)
+	t.Logf("payload %s , encrypt %s , decrypt  %s", payload, eString, dString)
 
 }
 
 func BenchmarkRandInt(b *testing.B) {
-	var v = "LA791!cs#"
+	var payload = "LA791!cs#"
 	for n := 0; n < b.N; n++ {
-		AESEncrypt(v)
+		AESEncrypt(payload)
 	}
 
 }
