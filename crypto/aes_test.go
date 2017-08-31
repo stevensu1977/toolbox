@@ -6,7 +6,6 @@ import (
 
 func TestAes(t *testing.T) {
 	var source = "AA398!cs#"
-
 	e, _ := AESEncrypt(source)
 	t.Log(e)
 	r, _ := AESDecrypt(e)
