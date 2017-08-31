@@ -18,31 +18,37 @@ const (
 	MixLower
 )
 
+const (
+	number        = "0123456789"
+	upperCharater = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	lowerCharater = "abcdefghijklmnopqrstuvwxyz"
+)
+
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano()) //very important
 }
 
-func rand_seek(rand_type int) string {
+func randSeek(randType int) string {
 
-	switch rand_type {
+	switch randType {
 	case Number:
-		return "0123456789"
+		return number
 	case NumberNoZero:
 		return "123456789"
 	case Hex:
-		return "0123456789ABCDEF"
+		return number + "ABCDEF"
 	case Upper:
-		return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		return upperCharater
 	case Lower:
-		return "abcdefghijklmnopqrstuvwxyz"
+		return lowerCharater
 	case MixAll:
-		return "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+		return number + upperCharater + lowerCharater
 	case MixUpper:
-		return "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		return number + upperCharater
 	case MixLower:
-		return "0123456789abcdefghijklmnopqrstuvwxyz"
+		return number + lowerCharater
 	default:
-		return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+		return upperCharater + lowerCharater
 	}
 }
 
@@ -52,22 +58,17 @@ func RandString(str_size int, rand_type ...int) string {
 	if len(rand_type) > 0 {
 		mix = rand_type[0]
 	}
-	return _rand(str_size, mix)
-}
-
-func _rand(str_size int, rand_type int) string {
-
-	alphanum := rand_seek(rand_type)
-	return rand_str(str_size, alphanum)
+	alphanum := randSeek(mix)
+	return randStr(str_size, alphanum)
 }
 
 func RandInt(str_size int) int {
 
-	alphanum := rand_seek(Number)
-	return rand_int(str_size, alphanum)
+	alphanum := randSeek(Number)
+	return randInt(str_size, alphanum)
 }
 
-func rand_str(str_size int, alphanum string) string {
+func randStr(str_size int, alphanum string) string {
 	var bytes = make([]byte, str_size)
 	// put here it's very slow, go put init !!!!
 	//rand.Seed(time.Now().UTC().UnixNano()) //very important
@@ -78,9 +79,9 @@ func rand_str(str_size int, alphanum string) string {
 	return string(bytes)
 }
 
-func rand_int(str_size int, alphanum string) int {
+func randInt(str_size int, alphanum string) int {
 	var bytes = make([]byte, str_size)
-	noZero := rand_seek(NumberNoZero)
+	noZero := randSeek(NumberNoZero)
 	rand.Read(bytes)
 	for i, b := range bytes {
 		bytes[i] = alphanum[b%byte(len(alphanum))]

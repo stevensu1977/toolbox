@@ -4,20 +4,19 @@ import (
 	"testing"
 )
 
-func TestRandString(t *testing.T) {
+func TestRandStringNormal(t *testing.T) {
+	result := []string{}
 
-	r1 := RandString(6)
-	r2 := RandString(18)
-	t.Log(r1)
-	t.Log(r2)
-	t.Log("=====")
-	r3 := RandString(6, Lower)
-	r4 := RandString(6, Upper)
-	r5 := RandString(6, Number)
-	t.Log(r3)
-	t.Log(r4)
-	t.Log(r5)
+	result = append(result, RandString(6))
+	result = append(result, RandString(18))
 
+	result = append(result, RandString(6, Lower))
+	result = append(result, RandString(6, Lower))
+	result = append(result, RandString(6, Number))
+
+	for index := range result {
+		t.Log(result[index])
+	}
 }
 
 func TestRandStringMix(t *testing.T) {
