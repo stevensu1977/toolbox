@@ -20,7 +20,6 @@ type Spec struct {
 
 func TestRegisterSuccess(t *testing.T) {
 	DefaultInit()
-
 	err := Register(&User{}, "users")
 	if err != nil {
 		t.Error(err)
@@ -37,6 +36,27 @@ func TestRegisterSuccess(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+func TestCountAndPage(t *testing.T) {
+	DefaultInit()
+	err := Register(&User{}, "users")
+	if err != nil {
+		t.Error(err)
+	}
+
+	userModel, err := Model(&User{})
+	users := &[]User{}
+	PageSize(1)
+	t.Log(userModel.Count())
+	t.Log(userModel.Page())
+	userModel.FindWithPage(2, nil).All(users)
+	t.Log(PageSize(), users)
+	PageSize(10)
+
+	t.Log(userModel.Page())
+	userModel.FindWithPage(2, nil).All(users)
+	t.Log(PageSize(), users)
 }
 
 func TestCRUD(t *testing.T) {

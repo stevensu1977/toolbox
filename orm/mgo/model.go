@@ -13,12 +13,71 @@ func (self *MgoboxDocument) New(model interface{}) error {
 
 }
 
+func (self *MgoboxDocument) Count(query ...bson.M) (int, error) {
+	checkInit()
+	mConn := Conn()
+	defer mConn.Close()
+	if len(query) > 0 {
+		return mConn.DB(Database()).C(self.Collection).Find(query[0]).Select(bson.M{"_id": 1}).Count()
+	}
+	return mConn.DB(Database()).C(self.Collection).Find(nil).Select(bson.M{"_id": 1}).Count()
+}
+
+func (self *MgoboxDocument) Page(query ...bson.M) (int, error) {
+
+	checkInit()
+	mConn := Conn()
+	defer mConn.Close()
+	count := 1
+	if len(query) > 0 {
+		count, _ = self.Count(query[0])
+	} else {
+		count, _ = self.Count()
+	}
+
+	if count < pageSize {
+		return 1, nil
+	}
+
+	odd := count % pageSize
+	page := (count - odd) / pageSize
+
+	if odd > 0 {
+		page = page + 1
+	}
+
+	return page, nil
+
+}
+
 func (self *MgoboxDocument) Find(query bson.M) *mgo.Query {
 	checkInit()
 	if query == nil {
 		return session.DB(Database()).C(self.Collection).Find(nil)
 	}
 	return session.DB(Database()).C(self.Collection).Find(query)
+
+}
+
+func (self *MgoboxDocument) FindWithPage(page int, query bson.M) *mgo.Query {
+	checkInit()
+
+	count, err := self.Count(query)
+	if err != nil {
+		panic(err)
+	}
+	if page < 1 {
+		page = 1
+	}
+
+	if count < pageSize*(page-1) {
+		page = 2
+	}
+
+	if query == nil {
+		return session.DB(Database()).C(self.Collection).Find(nil).Skip(pageSize * (page - 1)).Limit(pageSize)
+	}
+	return session.DB(Database()).C(self.Collection).Find(query).Skip(pageSize * (page - 1)).Limit(pageSize)
 
 }
 

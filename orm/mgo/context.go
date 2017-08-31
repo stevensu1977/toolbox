@@ -13,11 +13,13 @@ var session *mgo.Session
 
 var models = make(map[string]*MgoboxDocument)
 
-var _mongoURL = "mongodb://localhost:27017/apicatalog"
+var _mongoURL = "mongodb://localhost:27017/mgobox"
 
-var _database = "mgobox"
+var _database = ""
 
 var _init = false
+
+var pageSize = 20
 
 func init() {
 
@@ -40,11 +42,26 @@ func PrintModels() {
 	fmt.Println(models)
 }
 
-func InitContext(mongoURL, database string) {
+func PageSize(size ...int) int {
+	if len(size) > 0 {
+		if size[0] > 0 {
+			pageSize = size[0]
+		}
+
+	}
+	return pageSize
+}
+
+func InitContext(mongoURL string, database ...string) {
 	_mongoURL = mongoURL
-	_database = database
+
 	_init = true
 	log.Printf("MongoDB url [%s] ", _mongoURL)
+	if len(database) > 0 {
+		_database = database[0]
+		log.Printf("Database %s", _database)
+	}
+
 	sess, err := mgo.Dial(_mongoURL)
 	if err != nil {
 		panic(err)
@@ -54,7 +71,7 @@ func InitContext(mongoURL, database string) {
 }
 
 func DefaultInit() {
-	InitContext(_mongoURL, _database)
+	InitContext(_mongoURL)
 }
 
 func SetDatabase(database string) {
