@@ -10,23 +10,24 @@ func TestRandStringNormal(t *testing.T) {
 	result = append(result, RandString(6))
 	result = append(result, RandString(18))
 
-	result = append(result, RandString(6, Lower))
-	result = append(result, RandString(6, Lower))
-	result = append(result, RandString(6, Number))
-
+	result = append(result, RandString(18, Lower))
+	result = append(result, RandString(18, Lower))
+	result = append(result, RandString(18, Number))
+	result = append(result, RandString(18, Hex))
 	for index := range result {
 		t.Log(result[index])
 	}
 }
 
 func TestRandStringMix(t *testing.T) {
+	result := []string{}
 
-	r1 := RandString(18, MixAll)
-	r2 := RandString(18, MixLower)
-	r3 := RandString(18, MixUpper)
-	t.Log(r1)
-	t.Log(r2)
-	t.Log(r3)
+	result = append(result, RandString(18, MixAll))
+	result = append(result, RandString(18, MixLower))
+	result = append(result, RandString(18, MixUpper))
+	for index := range result {
+		t.Log(result[index])
+	}
 
 }
 func TestRandInt(t *testing.T) {

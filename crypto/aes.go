@@ -23,7 +23,7 @@ type AESCoder struct {
 }
 
 func haveAesPrefix(payload string) bool {
-	return strings.HasPrefix(AES_Prefix)
+	return strings.HasPrefix(payload, AES_Prefix)
 }
 
 //Encrypt provide AES encrypt , accept string
