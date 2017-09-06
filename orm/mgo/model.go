@@ -6,7 +6,7 @@ import (
 )
 
 func (self *MgoboxDocument) New(model interface{}) error {
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	return mConn.DB(Database()).C(self.Collection).Insert(model)
@@ -14,7 +14,7 @@ func (self *MgoboxDocument) New(model interface{}) error {
 }
 
 func (self *MgoboxDocument) Count(query ...bson.M) (int, error) {
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	if len(query) > 0 {
@@ -25,7 +25,7 @@ func (self *MgoboxDocument) Count(query ...bson.M) (int, error) {
 
 func (self *MgoboxDocument) Page(query ...bson.M) (int, error) {
 
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	count := 1
@@ -51,7 +51,7 @@ func (self *MgoboxDocument) Page(query ...bson.M) (int, error) {
 }
 
 func (self *MgoboxDocument) Find(query bson.M) *mgo.Query {
-	checkInit()
+	initCheck()
 	if query == nil {
 		return session.DB(Database()).C(self.Collection).Find(nil)
 	}
@@ -60,7 +60,7 @@ func (self *MgoboxDocument) Find(query bson.M) *mgo.Query {
 }
 
 func (self *MgoboxDocument) FindWithPage(page int, query bson.M) *mgo.Query {
-	checkInit()
+	initCheck()
 
 	count, err := self.Count(query)
 	if err != nil {
@@ -82,47 +82,47 @@ func (self *MgoboxDocument) FindWithPage(page int, query bson.M) *mgo.Query {
 }
 
 func (self *MgoboxDocument) FindId(id string) *mgo.Query {
-	checkInit()
+	initCheck()
 	return session.DB(Database()).C(self.Collection).FindId(bson.ObjectIdHex(id))
 }
 
 func (self *MgoboxDocument) Remove(query bson.M) error {
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	return mConn.DB(Database()).C(self.Collection).Remove(query)
 }
 
 func (self *MgoboxDocument) RemoveId(id string) error {
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	return mConn.DB(Database()).C(self.Collection).RemoveId(bson.ObjectIdHex(id))
 }
 
 func (self *MgoboxDocument) UpdateId(id string, update interface{}) error {
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	return mConn.DB(Database()).C(self.Collection).UpdateId(bson.ObjectIdHex(id), update)
 }
 
 func (self *MgoboxDocument) Update(query bson.M, update interface{}) error {
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	return mConn.DB(Database()).C(self.Collection).Update(query, update)
 }
 
 func (self *MgoboxDocument) Change(query bson.M, change bson.M) error {
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	return mConn.DB(Database()).C(self.Collection).Update(query, bson.M{"$set": change})
 }
 
 func (self *MgoboxDocument) ChangeId(id string, change interface{}) error {
-	checkInit()
+	initCheck()
 	mConn := Conn()
 	defer mConn.Close()
 	return mConn.DB(Database()).C(self.Collection).UpdateId(bson.ObjectIdHex(id), bson.M{"$set": change})

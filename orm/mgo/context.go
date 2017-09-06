@@ -21,19 +21,18 @@ var _init = false
 
 var pageSize = 20
 
-func init() {
-
-}
-
-func checkInit() {
+func initCheck() {
 	if _init == false {
 		panic(errors.New("Context need  init first"))
 	}
 }
+
+//Conn native mgo session func
 func Conn() *mgo.Session {
 	return session.Copy()
 }
 
+//Close native mgo session func
 func Close() {
 	session.Close()
 }
@@ -101,6 +100,15 @@ func ModelByString(packageName, modelName string) (*MgoboxDocument, error) {
 
 	return nil, errors.New("Context not fond " + packageName + "." + modelName + " model, please register first")
 
+}
+
+func IsRegistered(model interface{}) bool {
+
+	v := reflect.ValueOf(model)
+	i := reflect.Indirect(v)
+	s := i.Type()
+	_, ok := models[s.String()]
+	return ok
 }
 
 func Register(model interface{}, collectionName string) error {

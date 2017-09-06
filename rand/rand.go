@@ -52,24 +52,27 @@ func randSeek(randType int) string {
 	}
 }
 
-func RandString(str_size int, rand_type ...int) string {
+//RandString generate rand string
+func RandString(strSize int, randType ...int) string {
 
 	mix := Mix
-	if len(rand_type) > 0 {
-		mix = rand_type[0]
+	if len(randType) > 0 {
+		mix = randType[0]
 	}
 	alphanum := randSeek(mix)
-	return randStr(str_size, alphanum)
+	return randStr(strSize, alphanum)
 }
 
-func RandInt(str_size int) int {
+//RandInt generate rand int
+func RandInt(strSize int) int {
 
 	alphanum := randSeek(Number)
-	return randInt(str_size, alphanum)
+	return randInt(strSize, alphanum)
 }
 
-func randStr(str_size int, alphanum string) string {
-	var bytes = make([]byte, str_size)
+//randStr package internal func
+func randStr(strSize int, alphanum string) string {
+	var bytes = make([]byte, strSize)
 	// put here it's very slow, go put init !!!!
 	//rand.Seed(time.Now().UTC().UnixNano()) //very important
 	rand.Read(bytes)
@@ -79,8 +82,9 @@ func randStr(str_size int, alphanum string) string {
 	return string(bytes)
 }
 
-func randInt(str_size int, alphanum string) int {
-	var bytes = make([]byte, str_size)
+//randInt package internal func
+func randInt(strSize int, alphanum string) int {
+	var bytes = make([]byte, strSize)
 	noZero := randSeek(NumberNoZero)
 	rand.Read(bytes)
 	for i, b := range bytes {
@@ -93,7 +97,6 @@ func randInt(str_size int, alphanum string) int {
 	r, err := strconv.Atoi(string(bytes))
 	if err != nil {
 		panic(err)
-		return 0
 	}
 	return r
 
