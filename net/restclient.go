@@ -19,13 +19,8 @@ func NewHTTPSimpleREST() *HTTPSimpleREST {
 }
 
 // Get 提供REST方法
-func (c *HTTPSimpleREST) Get(url string, data interface{}, reponse ...interface{}) error {
-	switch len(reponse) == 0 {
-	case false:
-		return c.DoREST(http.MethodGet, url, data, reponse[0])
-	default:
-		return c.DoREST(http.MethodGet, url, data, nil)
-	}
+func (c *HTTPSimpleREST) Get(url string, response interface{}) error {
+	return c.DoREST(http.MethodGet, url, nil, response)
 }
 
 // Post 提供REST方法

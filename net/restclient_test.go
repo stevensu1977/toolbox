@@ -11,7 +11,7 @@ func TestHTTPSimpleREST(t *testing.T) {
 
 	resp := &map[string]interface{}{}
 
-	err = client.Get("http://localhost:9999", nil, resp)
+	err = client.Get("http://localhost:9999", resp)
 	t.Log(resp)
 
 	data := map[string]string{}
