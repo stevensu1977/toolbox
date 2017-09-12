@@ -239,6 +239,7 @@ func Upload(url, fieldName string, file *os.File, ret interface{}, desc ...strin
 }
 
 func Fetch(path string, root ...string) error {
+	client := &http.Client{}
 	rootPath := "."
 	urlPtr, err := url.Parse(path)
 	if err != nil {
@@ -272,6 +273,26 @@ func Fetch(path string, root ...string) error {
 		if err != nil {
 			return err
 		}
+		//get file length origin
+		head, err := http.NewRequest(http.MethodHead, path, nil)
+		respHead, err := client.Do(head)
+		//log.Println(respHead.Header)
+
+		if length, ok := respHead.Header["Content-Length"]; ok {
+			flen, err := strconv.ParseInt(length[0], 10, 0)
+			if err != nil {
+				panic(err)
+			}
+			stat, err := w.Stat()
+			if err != nil {
+				return err
+			}
+			if stat.Size() == flen || stat.Size() > flen {
+				log.Println("File already complete")
+				return nil
+			}
+		}
+
 		w.Seek(stat.Size(), 0) //I think if use O_APPEND not require Seek
 		log.Printf("[%s] already exits, range size %d ", fileName, stat.Size())
 		request.Header.Set("Range", "bytes="+strconv.FormatInt(stat.Size(), 10)+"-")
@@ -283,14 +304,14 @@ func Fetch(path string, root ...string) error {
 		}
 
 	}
-	client := &http.Client{}
+
 	resp, err := client.Do(request)
-	defer resp.Body.Close()
-	log.Printf("start fetch %s", path)
-	//log.Println(resp.Header)
 	if err != nil {
 		panic(err)
 	}
+	log.Printf("start fetch %s", path)
+	//log.Println(resp.Header)
+	defer resp.Body.Close()
 
 	err = storage.MkdirAll(rootPath + "/" + parentPath)
 	if err != nil {
