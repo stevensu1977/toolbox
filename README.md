@@ -46,5 +46,7 @@ net provide simple way use golang network libraray
 	client.Headers["X-Identity-Domain"] = "cncsmtrail3578"
 	err = client.Put("http://localhost:9999", data, resp)
 	err = client.Post("http://localhost:9999", data, resp)
-	
+
+//Add Fetch func , support HTTP 206 Range
+		Fetch("http://www.unixstickers.com/image/cache/data/stickers/golang/golang.sh-600x600.png", "../upload")	
  ```
