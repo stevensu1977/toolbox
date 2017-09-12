@@ -10,6 +10,10 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/stevensu1977/toolbox/storage"
 )
 
 type HTTPSimpleClient struct {
@@ -226,6 +230,43 @@ func Upload(url, fieldName string, file *os.File, ret interface{}, desc ...strin
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(ret)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Fetch(path string, root ...string) error {
+	urlPtr, err := url.Parse(path)
+	rootPath := "."
+	if len(root) > 0 {
+		rootPath = root[0]
+	}
+	if err != nil {
+		return err
+	}
+	parentPath := filepath.Dir(urlPtr.Host + urlPtr.Path)
+	fileName := filepath.Base(urlPtr.Path)
+	if strings.HasSuffix(path, "/") {
+		fileName = "index.html"
+	}
+
+	resp, err := http.Get(path)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	err = storage.MkdirAll(rootPath + "/" + parentPath)
+	if err != nil {
+		return err
+	}
+	w, err := os.Create(rootPath + "/" + parentPath + "/" + fileName)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(w, resp.Body)
 	if err != nil {
 		return err
 	}

@@ -47,3 +47,8 @@ func TestHTTPSimpleClientPostForm(t *testing.T) {
 	t.Log(string(r.Body))
 
 }
+
+func TestHTTPFetch(t *testing.T) {
+	Fetch("https://golang.org/doc/gopher/gopherbw.png")
+	Fetch("https://golang.org/doc/gopher/gopherbw.png", "../upload")
+}
