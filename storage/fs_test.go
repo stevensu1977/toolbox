@@ -24,7 +24,7 @@ func TestFS_Abs(t *testing.T) {
 
 func TestFS_MkdirAll(t *testing.T) {
 	path := "./tmp/123/测试"
-	err := MkdisAll(path)
+	err := MkdirAll(path)
 	if err != nil {
 		t.Fatal(err)
 	}
