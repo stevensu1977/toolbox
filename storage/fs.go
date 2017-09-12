@@ -27,3 +27,10 @@ func Abs(path string) (string, error) {
 func ToSlash(path string) string {
 	return filepath.ToSlash(filepath.Clean(path))
 }
+
+func MkdisAll(path string) error {
+	if IsExit(path) != true {
+		return os.MkdirAll(path, 0777)
+	}
+	return nil
+}
