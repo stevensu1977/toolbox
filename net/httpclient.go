@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/stevensu1977/toolbox/storage"
@@ -238,38 +239,67 @@ func Upload(url, fieldName string, file *os.File, ret interface{}, desc ...strin
 }
 
 func Fetch(path string, root ...string) error {
-	urlPtr, err := url.Parse(path)
 	rootPath := "."
+	urlPtr, err := url.Parse(path)
+	if err != nil {
+		panic(err)
+	}
+
 	if len(root) > 0 {
 		rootPath = root[0]
 	}
-	if err != nil {
-		return err
-	}
 	parentPath := filepath.Dir(urlPtr.Host + urlPtr.Path)
 	fileName := filepath.Base(urlPtr.Path)
+
 	if strings.HasSuffix(path, "/") {
 		fileName = "index.html"
 	}
 
-	resp, err := http.Get(path)
+	request, err := http.NewRequest(http.MethodGet, path, nil)
 	if err != nil {
 		return err
 	}
+
+	var w *os.File
+	if storage.IsExit(rootPath + "/" + parentPath + "/" + fileName) {
+		//if I use O_APPEND , io.Copy will get error , need find why
+		//w, err = os.OpenFile(rootPath+"/"+parentPath+"/"+fileName, os.O_APPEND, 0666)
+		w, err = os.OpenFile(rootPath+"/"+parentPath+"/"+fileName, os.O_RDWR, 0666)
+		if err != nil {
+			panic(err)
+		}
+		stat, err := w.Stat()
+		if err != nil {
+			return err
+		}
+		w.Seek(stat.Size(), 0) //I think if use O_APPEND not require Seek
+		log.Printf("[%s] already exits, range size %d ", fileName, stat.Size())
+		request.Header.Set("Range", "bytes="+strconv.FormatInt(stat.Size(), 10)+"-")
+	} else {
+		storage.MkdirAll(rootPath + "/" + parentPath)
+		w, err = os.Create(rootPath + "/" + parentPath + "/" + fileName)
+		if err != nil {
+			return err
+		}
+
+	}
+	client := &http.Client{}
+	resp, err := client.Do(request)
 	defer resp.Body.Close()
+	log.Printf("start fetch %s", path)
+	//log.Println(resp.Header)
+	if err != nil {
+		panic(err)
+	}
 
 	err = storage.MkdirAll(rootPath + "/" + parentPath)
 	if err != nil {
-		return err
-	}
-	w, err := os.Create(rootPath + "/" + parentPath + "/" + fileName)
-	if err != nil {
-		return err
+		panic(err)
 	}
 	_, err = io.Copy(w, resp.Body)
 	if err != nil {
-		return err
+		panic(err)
 	}
-
+	log.Printf("fetch %s completed", path)
 	return nil
 }

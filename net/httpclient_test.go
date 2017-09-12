@@ -49,6 +49,6 @@ func TestHTTPSimpleClientPostForm(t *testing.T) {
 }
 
 func TestHTTPFetch(t *testing.T) {
-	Fetch("https://golang.org/doc/gopher/gopherbw.png")
-	Fetch("https://golang.org/doc/gopher/gopherbw.png", "../upload")
+	Fetch("http://www.unixstickers.com/image/cache/data/stickers/golang/golang.sh-600x600.png", "../upload")
+	Fetch("http://dl.google.com/chrome/install/696.57/chrome_installer.exe", "../upload")
 }
