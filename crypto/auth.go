@@ -11,8 +11,8 @@ func BasicAuthEncode(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-//BaseAuthDecode is HTTP Basic Auth helper func
-func BaseAuthDecode(input string) ([]string, error) {
+//BasicAuthDecode is HTTP Basic Auth helper func
+func BasicAuthDecode(input string) ([]string, error) {
 
 	data, err := Base64Decode(input)
 
