@@ -22,6 +22,6 @@ func TestBasicAuthEncode(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(str1)
-	t.Log(BaseAuthDecode(encodePassword))
+	t.Log(BasicAuthDecode(encodePassword))
 
 }
