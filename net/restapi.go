@@ -16,7 +16,7 @@ const (
 
 //Encoder 抽象出来的处理器
 type Encoder interface {
-	ContentEncode(v interface{}) error
+	Encode(v interface{}) error
 }
 
 type XMLEncoder struct {
@@ -31,15 +31,15 @@ type RawEncoder struct {
 	body *bytes.Buffer
 }
 
-func (r *RawEncoder) ContentEncode(v interface{}) error {
+func (r *RawEncoder) Encode(v interface{}) error {
 	_, err := r.body.Write([]byte(fmt.Sprintf("%v", v)))
 	return err
 }
 
-func (j *JSONEncoder) ContentEncode(v interface{}) error {
+func (j *JSONEncoder) Encode(v interface{}) error {
 	return j.encoder.Encode(v)
 }
-func (x *XMLEncoder) ContentEncode(v interface{}) error {
+func (x *XMLEncoder) Encode(v interface{}) error {
 	return x.encoder.Encode(v)
 }
 
@@ -77,7 +77,7 @@ func serverAPI(apiType int, w http.ResponseWriter, model interface{}) {
 		contentType = "text/html"
 	}
 
-	err := contentWriter.ContentEncode(model)
+	err := contentWriter.Encode(model)
 	if err != nil {
 		w.WriteHeader(500)
 		w.Write([]byte(err.Error()))
