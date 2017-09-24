@@ -12,6 +12,16 @@ type EchoModel struct {
 	Body   string
 }
 
+func TestBuildRawQuery(t *testing.T) {
+	p := make(map[string]string)
+	p["token"] = "123123"
+	p["appID"] = "abcd"
+	p["appName"] = "汉字,http://demo"
+	baseURL := "https://api.github.com"
+	BuildRawQuery(baseURL, p)
+
+}
+
 func TestClientUnmarshal(t *testing.T) {
 	r := &map[string]interface{}{}
 	GetUnmarshal("http://localhost:9999", r)

@@ -3,6 +3,7 @@ package net
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -45,6 +46,22 @@ func NewHTTPSimpleClient() *HTTPSimpleClient {
 	return &HTTPSimpleClient{
 		Headers: map[string]string{},
 	}
+}
+
+//BuildRawQuery provide simple func to help add url parameter
+func BuildRawQuery(baseURL string, parameter map[string]string) (string, error) {
+
+	myurl, err := url.Parse(baseURL)
+	if err != nil {
+		return "", nil
+	}
+	q := myurl.Query()
+	for k, v := range parameter {
+		q.Set(k, v)
+	}
+	myurl.RawQuery = q.Encode()
+	fmt.Println(myurl.String())
+	return myurl.String(), nil
 }
 
 // Get 方法提供快速访问URL
