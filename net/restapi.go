@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -15,9 +17,24 @@ const (
 	API_RAW
 )
 
-//Encoder 抽象出来的处理器
+//Encoder 抽象出来的Encoder处理器
 type Encoder interface {
 	Encode(v interface{}) error
+}
+
+//Decoder 抽象出来的Decoder处理器
+type Decoder interface {
+	Decode(v interface{}) error
+}
+
+//XMLDecoder xml decorder
+type XMLDecoder struct {
+	decoder *xml.Decoder
+}
+
+//JSONDecoder json decorder
+type JSONDecoder struct {
+	decoder *json.Decoder
 }
 
 //XMLEncoder xml encoder
@@ -51,6 +68,16 @@ func (x *XMLEncoder) Encode(v interface{}) error {
 	return x.encoder.Encode(v)
 }
 
+//Decode implement Decoder interface
+func (j *JSONDecoder) Decode(v interface{}) error {
+	return j.decoder.Decode(v)
+}
+
+//Decode implement Decoder interface
+func (x *XMLDecoder) Decode(v interface{}) error {
+	return x.decoder.Decode(v)
+}
+
 //ServerJSON provide simple REST API go struct to JSON  func
 func ServerJSON(w http.ResponseWriter, model interface{}) {
 	serverAPI(API_JSON, w, model)
@@ -64,6 +91,16 @@ func ServerXML(w http.ResponseWriter, model interface{}) {
 //ServerRAW provid simple REST API RAW go structure
 func ServerRAW(w http.ResponseWriter, model interface{}) {
 	serverAPI(API_RAW, w, model)
+}
+
+//ConsumeJSON provid simple JSON decode from request body
+func ConsumeJSON(r io.ReadCloser, model interface{}) {
+	consumeAPI(API_JSON, r, model)
+}
+
+//ConsumeXML provid simple XML decode from request body
+func ConsumeXML(r io.ReadCloser, model interface{}) {
+	consumeAPI(API_XML, r, model)
 }
 
 //serverAPI is internal func
@@ -96,4 +133,28 @@ func serverAPI(apiType int, w http.ResponseWriter, model interface{}) {
 	}
 	w.Header().Add("Content-Type", contentType)
 	buf.WriteTo(w)
+}
+
+//internal func
+func consumeAPI(apiType int, r io.ReadCloser, model interface{}) error {
+	var contentWriter Decoder
+	switch apiType {
+	case API_JSON:
+		contentWriter = &JSONDecoder{
+			decoder: json.NewDecoder(r),
+		}
+	case API_XML:
+		contentWriter = &XMLDecoder{
+			decoder: xml.NewDecoder(r),
+		}
+	default:
+		return errors.New("only support json, xml decode")
+
+	}
+
+	err := contentWriter.Decode(model)
+	if err != nil {
+		return err
+	}
+	return nil
 }

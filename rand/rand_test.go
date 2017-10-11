@@ -11,7 +11,7 @@ func TestRandStringNormal(t *testing.T) {
 	result = append(result, RandString(18))
 
 	result = append(result, RandString(18, Lower))
-	result = append(result, RandString(18, Lower))
+	result = append(result, RandString(32, MixAll))
 	result = append(result, RandString(18, Number))
 	result = append(result, RandString(18, Hex))
 	for index := range result {
