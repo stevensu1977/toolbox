@@ -125,7 +125,9 @@ func serverAPI(apiType int, w http.ResponseWriter, model interface{}) {
 		}
 		contentType = "text/html"
 	}
-
+	if model == nil {
+		model = map[string]string{}
+	}
 	err := contentWriter.Encode(model)
 	if err != nil {
 		w.WriteHeader(500)
