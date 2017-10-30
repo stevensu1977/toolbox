@@ -17,3 +17,11 @@ func TestLoadTemplate(t *testing.T) {
 	}
 
 }
+
+func Hello() string {
+	return "hello"
+}
+func TestCustomFunc(t *testing.T) {
+	AddFunc("hello", Hello)
+	t.Log(AllFunc())
+}

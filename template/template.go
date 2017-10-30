@@ -25,6 +25,19 @@ func GetTemplatePath() string {
 	return templatePath
 }
 
+//AddFunc Privode helper func help add custom template func
+func AddFunc(funcname string, handler interface{}) {
+	funcMap[funcname] = handler
+}
+
+func AllFunc() []string {
+	keys := make([]string, len(funcMap))
+	for k := range funcMap {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
 //LoadTemplate is helper funcs load templatepath
 func LoadTemplate(templateName string) (*template.Template, error) {
 	//fmt.Println(filepath.Abs(templatePath))
