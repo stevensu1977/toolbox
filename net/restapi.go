@@ -80,11 +80,19 @@ func (x *XMLDecoder) Decode(v interface{}) error {
 
 //ServerJSON provide simple REST API go struct to JSON  func
 func ServerJSON(w http.ResponseWriter, model interface{}) {
+	if model == nil {
+		model = map[string]string{}
+	}
 	serverAPI(API_JSON, w, model)
 }
 
 //ServerXML provide simple REST API go struct to XML func
 func ServerXML(w http.ResponseWriter, model interface{}) {
+	if model == nil {
+		model = struct {
+			XMLName struct{} `xml:"xml" json:"-" xorm:"-"`
+		}{}
+	}
 	serverAPI(API_XML, w, model)
 }
 
@@ -125,9 +133,7 @@ func serverAPI(apiType int, w http.ResponseWriter, model interface{}) {
 		}
 		contentType = "text/html"
 	}
-	if model == nil {
-		model = map[string]string{}
-	}
+
 	err := contentWriter.Encode(model)
 	if err != nil {
 		w.WriteHeader(500)
